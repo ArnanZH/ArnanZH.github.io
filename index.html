@@ -14850,7 +14850,13 @@ Saba not found in regex
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Missing-Data">Missing Data<a class="anchor-link" href="#Missing-Data">&#182;</a></h3><p>Here we perform an inner merge. This omits any coutnries that either do not have a EIU index or COVID 19 data. Since we are plotting EIU vs deaths or cases, if either is NaN, we drop it outright. In our case, we do not have any missing values so this is unnecessary, but if there were missing values, the country should be removed from analysis. An inner merge is performed since if either deaths or cases are missing, it would not be possible to plot deaths vs cases.</p>
+<h3 id="Missing-Data">Missing Data<a class="anchor-link" href="#Missing-Data">&#182;</a></h3><p>Here we perform an inner merge. This omits any countries that each dataset does not agree on whether it is a country. If we include these, then certain places will be counted twice. For example, Saba is a dutch municipality that is counted separate in the WHO data. If we include this, we would be counting the netherlands twice in a way, and since the government is part of the netherlands anyway, it is already included with the democracy index.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>That being said, if single values are NaN can still be represented if other data since only 2 data points are NaN. This should not affect the final analysis and we would only have to analyze it more closely if missing data was more common and had a patters, however, out of 167, the impact would be negligible on the final analysis.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -15022,6 +15028,7 @@ Saba not found in regex
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">gdp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;gdp.csv&#39;</span><span class="p">)</span>
 <span class="n">press</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;press.csv&#39;</span><span class="p">)</span>
 <span class="n">press</span> <span class="o">=</span> <span class="n">press</span><span class="p">[[</span><span class="s1">&#39;EN_country&#39;</span><span class="p">,</span> <span class="s1">&#39;Score 2020&#39;</span><span class="p">]]</span>
+<span class="c1"># Convert name of country to ISO3 Standard in same column</span>
 <span class="n">press</span><span class="p">[</span><span class="s1">&#39;EN_country&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">names</span> <span class="o">=</span> <span class="n">press</span><span class="p">[</span><span class="s1">&#39;EN_country&#39;</span><span class="p">],</span> <span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;ISO3&#39;</span><span class="p">)</span>
 <span class="n">gdp</span><span class="p">[</span><span class="s1">&#39;Country or Area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">names</span> <span class="o">=</span> <span class="n">gdp</span><span class="p">[</span><span class="s1">&#39;Country or Area&#39;</span><span class="p">],</span> <span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;ISO3&#39;</span><span class="p">)</span>
 <span class="n">gdp</span>
@@ -15385,6 +15392,7 @@ United Republic of Tanzania: Zanzibar not found in regex
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">press</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="n">right_on</span> <span class="o">=</span> <span class="s1">&#39;EN_country&#39;</span><span class="p">)</span>
 <span class="c1"># Rename column to something more meaningful</span>
 <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Score 2020&#39;</span><span class="p">:</span><span class="s1">&#39;press&#39;</span><span class="p">},</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Drop unnecessary columns</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;deaths&#39;</span><span class="p">,</span> <span class="s1">&#39;Country or Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Country Code&#39;</span><span class="p">,</span> <span class="s1">&#39;EN_country&#39;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span>
 </pre></div>
